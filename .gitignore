@@ -1,0 +1,40 @@
+# Secrets — keep the example file
+.env
+.env.*
+!.env.example
+
+# React and extension dependencies/builds
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Logs, editor, and operating-system files
+*.log
+.idea/
+.DS_Store
+Thumbs.db
+
+# Real applicant data and database exports
+private-data/
+uploads/
+dump/
+
+# Packaged extensions and private keys
+*.crx
+*.pem
+*.key
