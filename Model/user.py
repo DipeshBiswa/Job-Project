@@ -1,22 +1,22 @@
 
 class User:
     def __init__(self, firstName, lastName, email, password):
-        self.firstName = firstName
-        self.lastName = lastName
-        self.email = email
+        self.__firstName = firstName
+        self.__lastName = lastName
+        self.__email = email
+        self.__password = password
 
     def getFirstName(self):
-        return self.firstName
+        return self.__firstName
     def getLastName(self):
-        return self.lastName
+        return self.__lastName
     def getEmail(self):
-        return self.email
+        return self.__email
     
     def setFirstName(self, firstName):
-        self.firstName = firstName
+        self.__firstName = firstName
     def setLastName(self, lastName):
-        self.lastName = lastName
+        self.__lastName = lastName
     def setEmail(self, email):
-        self.email = email
-        
-    
+        self.__email = email
+
