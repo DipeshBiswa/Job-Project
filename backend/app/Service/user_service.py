@@ -1,9 +1,9 @@
 
-from app.Model.user import User
+from Model.user import User
 from fastapi import HTTPException
 from pymongo.errors import DuplicateKeyError
 from pwdlib import PasswordHash
-from app.Schema.user_schema import UserCreate, UserResponse
+from Schema.user_schema import UserCreate, UserResponse
 
 password_hasher = PasswordHash.recommended()
 

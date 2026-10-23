@@ -36,7 +36,7 @@ function Authencation(){
                 <input type="text" id="lastname" autoComplete="family-name" onChange={(e) => setLast(e.target.value)} required />
 
                 <label htmlFor="password"> Password</label>
-                <input type="password" id="password" autoComplete="new-password" onChange={(e) => setPassword(e.target.value)} required />
+                <input type="password" id="password" autoComplete="new-password" minLength={8} onChange={(e) => setPassword(e.target.value)} required />
 
 
                 <button type="submit"> Register</button>

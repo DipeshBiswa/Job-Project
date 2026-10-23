@@ -5,10 +5,14 @@ from fastapi import FastAPI
 from pymongo import AsyncMongoClient
 from beanie import init_beanie
 
-from app.Model.user import User
-from app.Controller.user_controller import router as user_router
+from Model.user import User
+from Controller.user_controller import router as user_router
 
-app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+
+
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -23,10 +27,21 @@ async def lifespan(app: FastAPI):
     yield
     await client.close()
 
-    app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan)
 
-    app.include_router(user_router)
+app.include_router(user_router)
 
-    @app.get("/")
-    async def home():
-        return {"message" : "Job Project API is running"}
+@app.get("/")
+async def home():
+    return {"message" : "Job Project API is running"}
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
