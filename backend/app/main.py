@@ -5,9 +5,8 @@ from fastapi import FastAPI
 from pymongo import AsyncMongoClient
 from beanie import init_beanie
 
-from Model.user import User
-from Controller.user_controller import router as user_router
-
+from app.Model.user import User
+from app.Controller.user_controller import router as user_router
 from fastapi.middleware.cors import CORSMiddleware
 
 
