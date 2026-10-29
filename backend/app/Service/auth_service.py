@@ -19,6 +19,20 @@ class AuthService:
                 email = user.email
     
             )
+    async def login(self, data: UserCreate):
+            existingEmail = await User.find_one(User.email == data.email)
+
+            if not existingEmail:
+                  raise HTTPException(409, "Email Not Found")
+            
+            hashedPassword = password_hasher.hash(data.password)
+
+            existPassword = await User.find_one(User.password_hash == hashedPassword)
+
+            if not existPassword:
+                  raise HTTPException(409, "Password incorrect")
+            
+
     
     async def register(self, data: UserCreate):
             existing = await User.find_one(User.email == data.email)
@@ -41,5 +55,4 @@ class AuthService:
     
 
 
-    async def login(self):
-        return
+    
