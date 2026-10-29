@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.Service.user_service import UserService
-from Schema.user_schema import UserCreate, UserResponse
+from app.Schema.user_schema import UserCreate, UserResponse
 
 router = APIRouter(
     prefix="/users",
