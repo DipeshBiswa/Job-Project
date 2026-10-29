@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { registerUser } from "../api/authencationApi";
+import './authentication.css'
 
 
 function Authencation(){
@@ -25,8 +26,9 @@ function Authencation(){
     }
     return(
         <div>
+            <div className="register">
             <form onSubmit={makeUser}>
-                <label htmlFor="email">Email Address</label>
+                <label htmlFor="email">Email</label>
                 <input type="email" id="email" name="email" autoComplete="email" onChange={(e) => setEmail(e.target.value)} required />
 
                 <label htmlFor="firstname"> First Name</label>
@@ -39,10 +41,24 @@ function Authencation(){
                 <input type="password" id="password" autoComplete="new-password" minLength={8} onChange={(e) => setPassword(e.target.value)} required />
 
 
-                <button type="submit"> Register</button>
+                <button type="submit"> Register </button>
 
 
             </form>
+
+            <div>
+                <form>
+                    <label htmlFor="email"> Email</label>
+                    <input type="email" id="email" name="email" autoComplete="email" required />
+
+                    <label htmlFor="password"> password</label>
+                    <input type="password" id="password" autoComplete="login-password" required />
+
+                    <button type="submit"> Login </button>
+
+                </form>
+            </div>
+            </div>
         </div>
     )
 }
