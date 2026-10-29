@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.Service.user_service import UserService
 from app.Schema.user_schema import UserCreate, UserResponse
+from app.Service.auth_service import AuthService
 
 router = APIRouter(
     prefix="/users",
@@ -12,10 +13,14 @@ router = APIRouter(
 def get_user_service():
     return UserService()
 
+def get_auth_service():
+    return AuthService()
+
+
 @router.post("/register", response_model=UserResponse, status_code=201)
 async def register_user(
     user: UserCreate,
-    service: Annotated[UserService, Depends(get_user_service)]
+    service: Annotated[UserService, Depends(get_auth_service)]
 ):
     return await service.register(user)
 

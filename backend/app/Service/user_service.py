@@ -18,25 +18,6 @@ class UserService:
 
         )
 
-    async def register(self, data: UserCreate):
-        existing = await User.find_one(User.email == data.email)
-
-        if existing:
-            raise HTTPException(409, "Email already registered")
-
-        user = User(
-            firstName=data.firstName,
-            lastName=data.lastName,
-            email=data.email,
-            password_hash=password_hasher.hash(data.password)
-        )
-        try:
-            await user.insert()
-        except DuplicateKeyError:
-            raise HTTPException(409, "Email already registered")
-
-        return self.to_response(user)
-
     async def get_user_by_email(self,email:str):
         user = await User.find_one(User.email == email)
 
