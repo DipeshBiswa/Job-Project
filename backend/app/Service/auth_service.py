@@ -6,6 +6,11 @@ from pwdlib import PasswordHash
 from app.Schema.user_schema import UserCreate, UserResponse
 
 
+"""
+Class for basic form of authentation, login will return a JWT token and register will register the user to the database
+
+"""
+
 
 password_hasher = PasswordHash.recommended()
 
