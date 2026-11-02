@@ -5,6 +5,10 @@ from app.Service.user_service import UserService
 from app.Schema.user_schema import UserCreate, UserResponse
 from app.Service.auth_service import AuthService
 
+
+'''
+Controller to handle the authencation for the user
+'''
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
