@@ -21,6 +21,6 @@ class UserService:
     async def get_user_by_email(self,email:str):
         user = await User.find_one(User.email == email)
 
-        if User is None:
+        if user is None:
             return None
-        return self.to_response(User)
+        return self.to_response(user)

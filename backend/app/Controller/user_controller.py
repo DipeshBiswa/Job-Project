@@ -32,7 +32,7 @@ async def register_user(
 @router.post("/login", response_model=TokenResponse, status_code=200)
 async def login_user(
     user: UserLogin,
-    service: Annotated[AuthService, Depends[get_auth_service]]
+    service: Annotated[AuthService, Depends(get_auth_service)]
 ):
     return await service.login(user)
 
