@@ -34,8 +34,11 @@ class AuthService:
 
             existPassword = await User.find_one(User.password_hash == hashedPassword)
 
+
             if not existPassword:
                   raise HTTPException(409, "Password incorrect")
+
+            
             
 
     
