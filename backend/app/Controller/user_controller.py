@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.Service.user_service import UserService
-from app.Schema.user_schema import UserCreate, UserResponse
+from app.Schema.user_schema import UserCreate, UserResponse,UserLogin, TokenResponse
 from app.Service.auth_service import AuthService
 
 
@@ -24,9 +24,21 @@ def get_auth_service():
 @router.post("/register", response_model=UserResponse, status_code=201)
 async def register_user(
     user: UserCreate,
-    service: Annotated[UserService, Depends(get_auth_service)]
+    service: Annotated[AuthService, Depends(get_auth_service)]
 ):
     return await service.register(user)
+
+
+@router.post("/login", response_model=TokenResponse, status_code=200)
+async def login_user(
+    user: UserLogin,
+    service: Annotated[AuthService, Depends[get_auth_service]]
+):
+    return await service.login(user)
+
+
+
+
 
 @router.get("/{email}", response_model=UserResponse)
 async def get_user(
