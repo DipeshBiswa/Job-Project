@@ -3,7 +3,7 @@ from app.Model.user import User
 from fastapi import HTTPException
 from pymongo.errors import DuplicateKeyError
 from pwdlib import PasswordHash
-from app.Schema.user_schema import UserCreate, UserResponse
+from app.Schema.user_schema import UserCreate, UserResponse, UserLogin
 
 from app.Service.jwt_service import create_access_token
 
@@ -26,23 +26,23 @@ class AuthService:
                 email = user.email
     
             )
-    async def login(self, data: UserCreate, userId: int):
-            existingEmail = await User.find_one(User.email == data.email)
+    async def login(self, data: UserLogin):
+            existingUser = await User.find_one(User.email == data.email)
 
-            if not existingEmail:
-                  raise HTTPException(409, "Email Not Found")
+            if not existingUser:
+                  raise HTTPException(401, "Email Not Found")
             
-            hashedPassword = password_hasher.hash(data.password)
-
-            existPassword = await User.find_one(User.password_hash == hashedPassword)
+            existPassword = password_hasher.verify(data.password, existingUser.password_hash)
 
 
             if not existPassword:
-                  raise HTTPException(409, "Password incorrect")
+                  raise HTTPException(401, "Password incorrect")
 
-            token = create_access_token(userId)
+            token = create_access_token(str(existingUser.id))
 
-            return token
+            return {
+                  "access_token": token,
+                  "token_type": "bearer"}
             
 
     
