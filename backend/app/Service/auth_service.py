@@ -5,6 +5,8 @@ from pymongo.errors import DuplicateKeyError
 from pwdlib import PasswordHash
 from app.Schema.user_schema import UserCreate, UserResponse
 
+from app.Service.jwt_service import create_access_token
+
 
 """
 Class for basic form of authentation, login will return a JWT token and register will register the user to the database
@@ -24,7 +26,7 @@ class AuthService:
                 email = user.email
     
             )
-    async def login(self, data: UserCreate):
+    async def login(self, data: UserCreate, userId: int):
             existingEmail = await User.find_one(User.email == data.email)
 
             if not existingEmail:
@@ -38,7 +40,9 @@ class AuthService:
             if not existPassword:
                   raise HTTPException(409, "Password incorrect")
 
-            
+            token = create_access_token(userId)
+
+            return token
             
 
     
