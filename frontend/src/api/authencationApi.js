@@ -18,3 +18,22 @@ export async function registerUser(user){
     }
     return response.json();
 }
+export async function loginUser(user){
+    const response = await fetch(`${URL}/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(user)
+    });
+    if(response.status === 401){
+        const error = await response.json().catch(() => ({}));
+        const detail = Array.isArray(error.detail)
+            ? error.detail.map((issue) => `${issue.loc.join(".")}: ${issue.msg}`).join("; ")
+            : error.detail;
+        throw new Error(detail || "Password Incorrect or Email not found");
+
+    }
+    return response.json();
+
+}
