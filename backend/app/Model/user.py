@@ -1,6 +1,11 @@
 from beanie import Document, Indexed
 from typing import Annotated
 
+"""
+Class representing the user 
+beanie library is for object document mapper for MongoDB
+"""
+
 class User(Document):
     firstName: str
     lastName: str

@@ -14,13 +14,26 @@ router = APIRouter(
     tags=["Users"]
 )
 
+"""
+function for return the userService class 
+@return: instance of UserService
+"""
 def get_user_service():
     return UserService()
 
+"""
+function for returning the authService class
+@return: instance of AuthService
+"""
 def get_auth_service():
     return AuthService()
 
 
+"""
+controller function to register a user
+
+@return: UserResponse 
+"""
 @router.post("/register", response_model=UserResponse, status_code=201)
 async def register_user(
     user: UserCreate,
@@ -28,7 +41,12 @@ async def register_user(
 ):
     return await service.register(user)
 
+"""
+controller function to login the user
 
+@return: token(token to send back to the client)
+
+"""
 @router.post("/login", response_model=TokenResponse, status_code=200)
 async def login_user(
     user: UserLogin,

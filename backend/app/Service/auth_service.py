@@ -13,11 +13,20 @@ Class for basic form of authentation, login will return a JWT token and register
 
 """
 
-
+"""
+password hasher
+"""
 password_hasher = PasswordHash.recommended()
+
+
 
 class AuthService:
 
+    """
+    @Param: user
+    @return: UserSchema for the client
+
+    """
     def to_response(self, user:User) -> UserResponse:
             return UserResponse(
                 id = str(user.id),
@@ -26,6 +35,13 @@ class AuthService:
                 email = user.email
     
             )
+
+    """
+    controller function to login 
+    
+    @Param: UserLogin{password and email from client side}
+    @Return: token 
+    """
     async def login(self, data: UserLogin):
             existingUser = await User.find_one(User.email == data.email)
 
@@ -46,6 +62,12 @@ class AuthService:
             
 
     
+    """
+    Controller function to create a user 
+
+    @Param: data (user data that is being created)
+    @Return: UserResponse (user that has been created)
+    """
     async def register(self, data: UserCreate):
             existing = await User.find_one(User.email == data.email)
     
