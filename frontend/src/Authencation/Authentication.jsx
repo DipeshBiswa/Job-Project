@@ -2,6 +2,7 @@ import { useState } from "react"
 import './authentication.css'
 
 import { loginUser } from "../api/authencationApi";
+import { Link } from "react-router-dom";
 
 
 function Authencation(){
@@ -41,7 +42,14 @@ function Authencation(){
 
                     <button type="submit"> Login </button>
 
+
                 </form>
+            </div>
+
+            <div>
+                <h5>Need a account? 
+                    <Link to={"/register"}>register</Link>
+                </h5>
             </div>
             
         </div>

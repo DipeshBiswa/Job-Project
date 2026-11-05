@@ -1,6 +1,7 @@
 
 import { registerUser } from "../api/authencationApi";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Register(){
 
@@ -45,8 +46,12 @@ export default function Register(){
 
                 <button type="submit"> Register </button>
 
-
             </form>
+            <div>
+                <h5>Already have an account? 
+                    <Link to={"/login"}>login</Link>
+                </h5>
+            </div>
             </div>
     )    
 }
