@@ -2,13 +2,16 @@ import { useState } from "react"
 import './authentication.css'
 
 import { loginUser } from "../api/authencationApi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 function Authencation(){
 
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("")
 
     const user ={
         email:email,
@@ -17,11 +20,12 @@ function Authencation(){
 
     async function login(e){
         e.preventDefault();
-
+        setError("");
         try{
-            const token = loginUser(user);
+            const token = await loginUser(user);
+            navigate("/dashboard")
         }catch(error){
-            console.error("Error: ", token);
+            setError(error.message);
 
         }
 
@@ -38,10 +42,11 @@ function Authencation(){
                     <input type="email" id="email" name="email" autoComplete="email" required onChange={(e) => setEmail(e.target.value)}/>
 
                     <label htmlFor="password"> password</label>
-                    <input type="password" id="password" autoComplete="login-password" required onChange={(e) => setPassword(e.target.value)} />
+                    <input type="password" id="password" autoComplete="current-password" required onChange={(e) => setPassword(e.target.value)} />
 
                     <button type="submit"> Login </button>
 
+                    {error && <p>{error}</p>}
 
                 </form>
             </div>

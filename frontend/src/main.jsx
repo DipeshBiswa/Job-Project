@@ -5,11 +5,14 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider} from "react-router-dom"
 import Register from './Authencation/Register.jsx'
 import Authencation from './Authencation/Authentication.jsx'
+import Dashboard from './Dashboard/Dashboard.jsx'
 
 const router = createBrowserRouter([
   {path: "/register", element: <Register/>},
   {path: "/login" , element: <Authencation />},
+  {path: "/dashboard", element: <Dashboard />},
   {path: "/", element: <App />}
+  
   
 
 ])
