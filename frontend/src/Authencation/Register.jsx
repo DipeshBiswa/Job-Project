@@ -1,15 +1,17 @@
 
 import { registerUser } from "../api/authencationApi";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Register(){
 
+    const navigate = useNavigate();
 
     const [firstName, setFirst] = useState("");
     const [lastName, setLast] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
         
     const user = {
             firstName: firstName,
@@ -19,11 +21,13 @@ export default function Register(){
         }
     async function makeUser(e){
             e.preventDefault();
+            setError("");
             try{
                 const response = await registerUser(user);
-    
+                navigate("/login");
+
             }catch(error){
-                console.error("Failed to create user", error)
+                setError(error.message);
             }
     }
 
@@ -45,6 +49,8 @@ export default function Register(){
 
 
                 <button type="submit"> Register </button>
+                
+                {error && <p>{error}</p>}
 
             </form>
             <div>
