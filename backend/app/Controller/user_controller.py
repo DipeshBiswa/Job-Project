@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.Service.user_service import UserService
 from app.Schema.user_schema import UserCreate, UserResponse,UserLogin, TokenResponse
 from app.Service.auth_service import AuthService
+from fastapi import Response
 
 
 '''
@@ -47,12 +48,24 @@ controller function to login the user
 @return: token(token to send back to the client)
 
 """
-@router.post("/login", response_model=TokenResponse, status_code=200)
+@router.post("/login", status_code=200)
 async def login_user(
     user: UserLogin,
+    response: Response,
     service: Annotated[AuthService, Depends(get_auth_service)]
 ):
-    return await service.login(user)
+    result = await service.login(user)
+    token = result["access_token"]
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=1800,
+        path="/"
+    )
+    return {"message": "Login successful"}
 
 
 

@@ -33,7 +33,7 @@ function Authencation(){
         <div>
 
             <div>
-                <form>
+                <form onSubmit={login}>
                     <label htmlFor="email"> Email</label>
                     <input type="email" id="email" name="email" autoComplete="email" required onChange={(e) => setEmail(e.target.value)}/>
 
