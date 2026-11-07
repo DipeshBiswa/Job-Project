@@ -30,7 +30,7 @@ export default function Register(){
                 setError(error.message);
             }
     }
-
+//cimments aded for this function
 
     return(
         <div className="register">
