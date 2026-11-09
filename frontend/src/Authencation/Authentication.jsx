@@ -5,6 +5,13 @@ import { loginUser } from "../api/authencationApi";
 import { Link, useNavigate } from "react-router-dom";
 
 
+/**
+ * Authencation component handles user login functionality.
+ *  It provides a form for users to enter their email and password, and upon submission,
+ *  it attempts to authenticate the user using the loginUser API function. If successful, 
+ * it navigates the user to the dashboard; if not, it displays an error message.
+ * @returns 
+ */
 function Authencation(){
 
     const navigate = useNavigate();
