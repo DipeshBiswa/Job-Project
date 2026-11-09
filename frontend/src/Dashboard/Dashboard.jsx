@@ -1,5 +1,9 @@
 
 
+/**
+ * dashboard component serves as the main interface for authenticated users.
+ * @returns 
+ */
 
 export default function Dashboard(){
 
