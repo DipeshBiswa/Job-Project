@@ -34,29 +34,28 @@ function Authencation(){
 
     
     return(
-        <div>
+        <div className="auth-page">
+            <Link to={"/"} className="site-logo">Prefill</Link>
+            <div className="auth-card">
+                <h1 className="auth-title">Log in</h1>
 
-            <div>
-                <form onSubmit={login}>
-                    <label htmlFor="email"> Email</label>
+                <form onSubmit={login} className="auth-form">
+                    <label htmlFor="email">Email</label>
                     <input type="email" id="email" name="email" autoComplete="email" required onChange={(e) => setEmail(e.target.value)}/>
 
-                    <label htmlFor="password"> password</label>
+                    <label htmlFor="password">Password</label>
                     <input type="password" id="password" autoComplete="current-password" required onChange={(e) => setPassword(e.target.value)} />
 
-                    <button type="submit"> Login </button>
+                    <button type="submit" className="btn btn-primary">Log in</button>
 
-                    {error && <p>{error}</p>}
+                    {error && <p className="auth-error">{error}</p>}
 
                 </form>
-            </div>
 
-            <div>
-                <h5>Need a account? 
-                    <Link to={"/register"}>register</Link>
-                </h5>
+                <p className="auth-footer">Don't have an account?{" "}
+                    <Link to={"/register"}>Sign up</Link>
+                </p>
             </div>
-            
         </div>
     )
 }

@@ -1,0 +1,28 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+}
+
+.landing-title {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.landing-subtitle {
+  margin: 12px 0 28px;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.landing-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
