@@ -2,7 +2,12 @@
 import { registerUser } from "../api/authencationApi";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./authentication.css";
+/**
+ * Register component handles user registration functionality.
+ *  It provides a form for users to enter their first name, last name, email, and password, and upon submission,
+ *  it attempts to register the user using the registerUser API function. If successful, it navigates the user to the login page; if not, it displays an error message.
+ * @returns 
+ */import "./authentication.css";
 
 export default function Register(){
 
