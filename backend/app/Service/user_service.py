@@ -5,7 +5,7 @@ from pymongo.errors import DuplicateKeyError
 from pwdlib import PasswordHash
 from app.Schema.user_schema import UserCreate, UserResponse
 
-password_hasher = PasswordHash.recommended()
+
 
 class UserService:
 
@@ -18,9 +18,9 @@ class UserService:
 
         )
 
-    async def get_user_by_email(self,email:str):
-        user = await User.find_one(User.email == email)
+    # async def get_user_by_email(self,email:str):
+    #     user = await User.find_one(User.email == email)
 
-        if user is None:
-            return None
-        return self.to_response(user)
+    #     if user is None:
+    #         return None
+    #     return self.to_response(user)
