@@ -69,17 +69,19 @@ async def login_user(
 
 
 
+"""
+Get emails removed, don't have a use for it 
+"""
 
-
-@router.get("/{email}", response_model=UserResponse)
-async def get_user(
-    email: str,
-    service: Annotated[UserService, Depends(get_user_service)]
-):
-    user = await service.get_user_by_email(email)
-    if user is None:
-        raise HTTPException(
-            status_code= 404,
-            detail="User not found"
-        )
-    return user
+# @router.get("/{email}", response_model=UserResponse)
+# async def get_user(
+#     email: str,
+#     service: Annotated[UserService, Depends(get_user_service)]
+# ):
+#     user = await service.get_user_by_email(email)
+#     if user is None:
+#         raise HTTPException(
+#             status_code= 404,
+#             detail="User not found"
+#         )
+#     return user
