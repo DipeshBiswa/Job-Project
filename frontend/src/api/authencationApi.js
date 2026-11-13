@@ -38,3 +38,13 @@ export async function loginUser(user){
     return response.json();
 
 }
+export async function logoutUser(){
+    const response = await fetch(`${URL}/logout`,{
+        method: "POST",
+        credentials: "include"
+    });
+    if (!response.ok){
+        throw new Error("Logout failed");
+    }
+    return response.json();
+}
