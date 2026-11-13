@@ -67,7 +67,15 @@ async def login_user(
     )
     return {"message": "Login successful"}
 
-
+@router.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+        httponly=True,
+        samesite="lax"
+    )
+    return {"message": "Logged out successfully"}
 
 """
 Get emails removed, don't have a use for it 
