@@ -6,6 +6,10 @@ from app.Schema.user_schema import UserCreate, UserResponse,UserLogin, TokenResp
 from app.Service.auth_service import AuthService
 from fastapi import Response
 
+from app.Dependencies.auth_dependency import get_current_user
+from app.Model.user import User
+
+
 
 '''
 Controller to handle the authencation for the user
@@ -77,3 +81,14 @@ async def logout(response: Response):
     )
     return {"message": "Logged out successfully"}
 
+@router.get("/me", response_model=UserResponse)
+async def get_me(
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    return UserResponse(
+        id=str(current_user.id),
+        firstName=current_user.firstName,
+        lastName=current_user.lastName,
+        email=current_user.email
+
+    )
