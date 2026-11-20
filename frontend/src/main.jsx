@@ -6,12 +6,21 @@ import { createBrowserRouter, RouterProvider} from "react-router-dom"
 import Register from './Authencation/Register.jsx'
 import Authencation from './Authencation/Authentication.jsx'
 import Dashboard from './Dashboard/Dashboard.jsx'
+import ProtectedRoute from './routes/ProtectedRoute.jsx'
 
 const router = createBrowserRouter([
   {path: "/register", element: <Register/>},
   {path: "/login" , element: <Authencation />},
-  {path: "/dashboard", element: <Dashboard />},
-  {path: "/", element: <App />}
+  {path: "/", element: <App />},
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />
+      }
+    ]
+  }
   
   
 
