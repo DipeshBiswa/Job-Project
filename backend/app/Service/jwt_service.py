@@ -47,12 +47,6 @@ def create_access_token(user_id: str) -> str:
     return token
 
 def decode_token(token: str) -> dict:
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM, options={"require": ["sub", "exp"]})
-        
-        return payload
-    except jwt.ExpiredSignatureError:
-        print("Token has expired.")
-    except jwt.InvalidTokenError as e:
-        print(f"Invalid token: {e}")
-        
+    return jwt.decode(
+        token, SECRET_KEY, algorithms=[ALGORITHM], options={"require": ["sub", "exp"]}
+    )

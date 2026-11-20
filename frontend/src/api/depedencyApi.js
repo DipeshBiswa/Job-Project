@@ -1,5 +1,5 @@
 
-const URL  = "http://127.0.0.1:8000/users"
+const URL = "/users"
 
 export async function getCurrentUser(){
     const response = await fetch(`${URL}/me`, {

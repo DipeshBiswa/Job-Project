@@ -1,5 +1,5 @@
 
-const URL  = "http://127.0.0.1:8000/users"
+const URL = "/users"
 
 export async function registerUser(user){
     const response = await fetch(`${URL}/register`, {
@@ -27,7 +27,7 @@ export async function loginUser(user){
         },
         body: JSON.stringify(user)
     });
-    if(response.status === 401){
+    if(!response.ok){
         const error = await response.json().catch(() => ({}));
         const detail = Array.isArray(error.detail)
             ? error.detail.map((issue) => `${issue.loc.join(".")}: ${issue.msg}`).join("; ")

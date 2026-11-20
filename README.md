@@ -31,6 +31,13 @@ imports prefixed with `app.` and match directory capitalization exactly
 The backend requires MongoDB. Set `MONGODB_URI` in the process environment to
 use another server; otherwise it connects to `mongodb://localhost:27017`.
 
+## Running the frontend
+
+From `frontend`, run `npm install` and `npm run dev`. Vite proxies `/users`
+requests to `http://127.0.0.1:8000`, keeping authentication cookies on the same
+host as the page. Restart Vite after changing its proxy configuration.
+Production hosting must also forward `/users` to the backend on the site's origin.
+
 ## Running backend tests
 
 With your virtual environment activated, install dependencies and run the suite

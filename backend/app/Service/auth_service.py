@@ -43,7 +43,8 @@ class AuthService:
     @Return: token 
     """
     async def login(self, data: UserLogin):
-            existingUser = await User.find_one(User.email == data.email)
+            email = data.email.lower()
+            existingUser = await User.find_one(User.email == email)
 
             if not existingUser:
                   raise HTTPException(401, "Email Not Found")
@@ -69,15 +70,16 @@ class AuthService:
     @Return: UserResponse (user that has been created)
     """
     async def register(self, data: UserCreate):
-            existing = await User.find_one(User.email == data.email)
+            email = data.email.lower()
+            existing = await User.find_one(User.email == email)
     
             if existing:
                 raise HTTPException(409, "Email already registered")
-    
+
             user = User(
                 firstName=data.firstName,
                 lastName=data.lastName,
-                email=data.email,
+                email=email,
                 password_hash=password_hasher.hash(data.password)
             )
             try:

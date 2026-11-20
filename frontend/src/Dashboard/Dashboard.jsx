@@ -9,7 +9,7 @@
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../api/authencationApi";
 import { getCurrentUser } from "../api/depedencyApi";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 
 export default function Dashboard(){
     const navigate = useNavigate();

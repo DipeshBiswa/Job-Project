@@ -1,6 +1,9 @@
 import os
 import unittest
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock
+
+import jwt
 
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
@@ -9,7 +12,9 @@ from unittest.mock import patch
 with patch.dict(os.environ, {"JWT_SECRET": "unit-test-secret-key-at-least-32-bytes"}):
     from app.Controller.user_controller import get_auth_service, get_user_service, router
 
-from tests.helpers import LOGIN_DATA, REGISTER_DATA, USER_RESPONSE
+from app.Model.user import User
+from app.Service.jwt_service import create_access_token, SECRET_KEY, ALGORITHM
+from tests.helpers import LOGIN_DATA, REGISTER_DATA, USER_RESPONSE, USER_ID, make_user
 
 
 class UserControllerTests(unittest.TestCase):
@@ -49,12 +54,14 @@ class UserControllerTests(unittest.TestCase):
                 self.assertEqual(response.status_code, 422)
         self.auth.register.assert_not_awaited()
 
-    def test_login_returns_200_and_token(self):
+    def test_login_sets_authentication_cookie(self):
         token = {"access_token": "test-token", "token_type": "bearer"}
         self.auth.login.return_value = token
         response = self.client.post("/users/login", json=LOGIN_DATA)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), token)
+        self.assertEqual(response.json(), {"message": "Login successful"})
+        self.assertEqual(self.client.cookies.get("access_token"), "test-token")
+        self.assertIn("HttpOnly", response.headers["set-cookie"])
         self.auth.login.assert_awaited_once()
         self.assertEqual(self.auth.login.call_args.args[0].model_dump(), LOGIN_DATA)
 
@@ -72,16 +79,39 @@ class UserControllerTests(unittest.TestCase):
                 self.assertEqual(self.client.post("/users/login", json=data).status_code, 422)
         self.auth.login.assert_not_awaited()
 
-    def test_get_user_returns_public_user(self):
-        self.users.get_user_by_email.return_value = {**USER_RESPONSE, "password_hash": "private"}
-        response = self.client.get("/users/test@example.com")
+    def test_login_cookie_authenticates_me_and_logout_clears_it(self):
+        self.auth.login.return_value = {"access_token": create_access_token(USER_ID)}
+        self.client.post("/users/login", json=LOGIN_DATA)
+        with patch.object(User, "get", new_callable=AsyncMock, return_value=make_user()) as get_user:
+            response = self.client.get("/users/me")
+        get_user.assert_awaited_once()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), USER_RESPONSE)
-        self.users.get_user_by_email.assert_awaited_once_with("test@example.com")
+        self.assertEqual(self.client.post("/users/logout").status_code, 200)
+        self.assertIsNone(self.client.cookies.get("access_token"))
+        self.assertEqual(self.client.get("/users/me").status_code, 401)
 
-    def test_get_user_returns_404_when_missing(self):
-        self.users.get_user_by_email.return_value = None
-        response = self.client.get("/users/missing@example.com")
-        self.assertEqual(response.status_code, 404)
+    def test_me_returns_401_without_cookie(self):
+        response = self.client.get("/users/me")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), {"detail": "Not authenticated"})
+
+    def test_me_returns_401_for_invalid_or_expired_tokens(self):
+        tokens = (
+            "malformed-token",
+            jwt.encode({"sub": USER_ID, "exp": datetime.now(timezone.utc) - timedelta(minutes=1)}, SECRET_KEY, algorithm=ALGORITHM),
+            jwt.encode({"sub": "invalid-user-id", "exp": datetime.now(timezone.utc) + timedelta(minutes=5)}, SECRET_KEY, algorithm=ALGORITHM),
+        )
+        for token in tokens:
+            with self.subTest(token=token):
+                self.client.cookies.set("access_token", token)
+                response = self.client.get("/users/me")
+                self.assertEqual(response.status_code, 401)
+                self.assertEqual(response.json(), {"detail": "Invalid or expired token"})
+
+    def test_me_returns_401_when_user_was_deleted(self):
+        self.client.cookies.set("access_token", create_access_token(USER_ID))
+        with patch.object(User, "get", new_callable=AsyncMock, return_value=None):
+            response = self.client.get("/users/me")
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json(), {"detail": "User not found"})
-        self.users.get_user_by_email.assert_awaited_once_with("missing@example.com")
