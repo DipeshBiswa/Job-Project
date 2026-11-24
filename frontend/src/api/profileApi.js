@@ -1,6 +1,24 @@
 
 const URL = "/profiles";
 
+export async function updateProfile(profile) {
+    const response = await fetch(`${URL}/me`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile)
+    });
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        const error = new Error(
+            typeof errorData?.detail === "string" ? errorData.detail : "Failed to update profile"
+        );
+        error.status = response.status;
+        throw error;
+    }
+    return response.json();
+}
+
 export async function getProfile(){
     const response = await fetch (`${URL}/me`, {
         method: "GET",

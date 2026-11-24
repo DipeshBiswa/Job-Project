@@ -37,6 +37,20 @@ class ProfileService:
             )
         return self.to_response(profile)
 
+    async def update_profile(
+            self, data: ProfileCreate, userId: PydanticObjectId
+    ) -> ProfileResponse:
+        profile = await Profile.find_one(Profile.userId == userId)
+
+        if profile is None:
+            raise HTTPException(status_code=404, detail="Profile not found")
+
+        # Replace profile fields only; ownership and document identity stay intact.
+        for field in ProfileCreate.model_fields:
+            setattr(profile, field, getattr(data, field))
+        await profile.replace()
+        return self.to_response(profile)
+
     async def get_profile(
             self,userId: PydanticObjectId
     ) -> ProfileResponse:

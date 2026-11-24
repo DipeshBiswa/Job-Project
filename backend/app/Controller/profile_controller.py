@@ -38,3 +38,13 @@ async def get_profile(
     service: Annotated[ProfileService, Depends(get_profile_services)]
 ):
     return await service.get_profile(current_user.id)
+
+
+@router.put("/me", response_model=ProfileResponse)
+async def update_profile(
+    data: ProfileCreate,
+    current_user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[ProfileService, Depends(get_profile_services)]
+):
+    """Replace the signed-in user's editable profile information."""
+    return await service.update_profile(data, current_user.id)

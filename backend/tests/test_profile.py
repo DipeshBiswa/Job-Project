@@ -75,6 +75,79 @@ class ProfileRequestTests(unittest.TestCase):
         app.dependency_overrides.pop(get_current_user)
         self.assertEqual(self.client.post("/profiles/me", json={}).status_code, 401)
 
+    def test_update_then_read_preserves_identity_and_all_fields(self):
+        profile = Profile(
+            id=PROFILE_ID, userId=PydanticObjectId(USER_ID), **PROFILE_DATA
+        )
+        self.find.return_value = profile
+        changes = {
+            "contactInformation": {
+                "preferredName": "Taylor", "phoneNumber": "555-0100",
+                "applicationEmail": "taylor@example.com"
+            },
+            "address": {
+                "street": "12 Main Street", "apartment": "2B", "city": "Boston",
+                "state": "MA", "zipCode": "02108", "country": "USA"
+            },
+            "education": [{
+                "university": "Example University", "degree": "BS", "major": "CS",
+                "gpa": 0, "startDate": "2020-09", "graduationDate": "2024-05"
+            }],
+            "workExperience": [{
+                "company": "New Company", "jobTitle": "Developer", "location": "Remote",
+                "startDate": "2024-06", "endDate": None, "currentlyWorking": True,
+                "description": "Build applications."
+            }],
+            "skills": ["Python", "React"],
+            "professionalLinks": {
+                "linkedin": "https://linkedin.com/in/taylor",
+                "github": "https://github.com/taylor", "portfolio": ""
+            },
+            "workEligibility": {
+                "authorizedToWork": True, "requiresSponsorship": False,
+                "willingToRelocate": None
+            },
+        }
+        # Client-supplied identity fields must never change ownership or ID.
+        payload = {**changes, "id": "507f1f77bcf86cd799439099",
+                   "userId": "507f1f77bcf86cd799439098"}
+        with patch.object(Profile, "replace", new_callable=AsyncMock) as replace:
+            response = self.client.put("/profiles/me", json=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"id": str(PROFILE_ID), **changes})
+        replace.assert_awaited_once()
+        self.find.assert_awaited_once_with({"userId": PydanticObjectId(USER_ID)})
+        self.assertEqual(profile.userId, PydanticObjectId(USER_ID))
+        self.assertEqual(self.client.get("/profiles/me").json(), response.json())
+
+    def test_update_can_clear_optional_fields_and_lists(self):
+        self.find.return_value = Profile(
+            id=PROFILE_ID, userId=PydanticObjectId(USER_ID), **PROFILE_DATA
+        )
+        with patch.object(Profile, "replace", new_callable=AsyncMock):
+            response = self.client.put("/profiles/me", json={})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["workExperience"], [])
+        self.assertIsNone(response.json()["workEligibility"]["requiresSponsorship"])
+
+    def test_update_missing_profile_returns_404(self):
+        with patch.object(Profile, "replace", new_callable=AsyncMock) as replace:
+            response = self.client.put("/profiles/me", json=PROFILE_DATA)
+        self.assertEqual(response.status_code, 404)
+        replace.assert_not_awaited()
+
+    def test_update_requires_login(self):
+        app.dependency_overrides.pop(get_current_user)
+        self.assertEqual(self.client.put("/profiles/me", json={}).status_code, 401)
+        self.find.assert_not_awaited()
+
+    def test_invalid_update_is_not_saved(self):
+        with patch.object(Profile, "replace", new_callable=AsyncMock) as replace:
+            response = self.client.put("/profiles/me", json={"education": [{"gpa": "invalid"}]})
+        self.assertEqual(response.status_code, 422)
+        replace.assert_not_awaited()
+        self.find.assert_not_awaited()
+
 
 class ProfileStartupTests(unittest.IsolatedAsyncioTestCase):
     async def test_startup_initializes_profile_collection(self):

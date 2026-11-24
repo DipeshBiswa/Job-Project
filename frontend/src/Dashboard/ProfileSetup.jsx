@@ -1,7 +1,7 @@
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { createProfile } from "../api/profileApi";
+import { createProfile, getProfile, updateProfile } from "../api/profileApi";
 
 const blankEducation = (id) => ({
     id,
@@ -24,7 +24,7 @@ const blankWorkExperience = (id) => ({
     description: ""
 });
 
-export default function ProfileSetup() {
+export default function ProfileSetup({ editing = false }) {
     const navigate = useNavigate();
     const nextId = useRef(3);
 
@@ -57,6 +57,69 @@ export default function ProfileSetup() {
 
     const [error, setError] = useState("");
     const [saving, setSaving] = useState(false);
+    const [loading, setLoading] = useState(editing);
+    const [loaded, setLoaded] = useState(!editing);
+
+    useEffect(() => {
+        if (!editing) return;
+        let active = true;
+
+        async function loadProfile() {
+            try {
+                const profile = await getProfile();
+                if (!active) return;
+                const contact = profile.contactInformation ?? {};
+                const address = profile.address ?? {};
+                const links = profile.professionalLinks ?? {};
+                const eligibility = profile.workEligibility ?? {};
+                const booleanValue = value => value == null ? "" : String(value);
+                setForm({
+                    preferredName: contact.preferredName ?? "",
+                    phoneNumber: contact.phoneNumber ?? "",
+                    applicationEmail: contact.applicationEmail ?? "",
+                    street: address.street ?? "",
+                    apartment: address.apartment ?? "",
+                    city: address.city ?? "",
+                    state: address.state ?? "",
+                    zipCode: address.zipCode ?? "",
+                    country: address.country ?? "",
+                    skills: (profile.skills ?? []).join(", "),
+                    linkedin: links.linkedin ?? "",
+                    github: links.github ?? "",
+                    portfolio: links.portfolio ?? "",
+                    authorizedToWork: booleanValue(eligibility.authorizedToWork),
+                    requiresSponsorship: booleanValue(eligibility.requiresSponsorship),
+                    willingToRelocate: booleanValue(eligibility.willingToRelocate)
+                });
+                let id = 1;
+                setEducations((profile.education ?? []).map(item => ({
+                    ...blankEducation(id++), ...item,
+                    gpa: item.gpa ?? "",
+                    startDate: item.startDate ?? "",
+                    graduationDate: item.graduationDate ?? ""
+                })));
+                setWorkExperiences((profile.workExperience ?? []).map(item => ({
+                    ...blankWorkExperience(id++), ...item,
+                    location: item.location ?? "",
+                    startDate: item.startDate ?? "",
+                    endDate: item.endDate ?? "",
+                    description: item.description ?? ""
+                })));
+                nextId.current = id;
+                setLoaded(true);
+            } catch (error) {
+                if (!active) return;
+                if (error.status === 401) navigate("/login", { replace: true });
+                else if (error.status === 404) navigate("/profile/setup", { replace: true });
+                else setError(error.message);
+            } finally {
+                if (active) setLoading(false);
+            }
+        }
+
+        loadProfile();
+        return () => { active = false; };
+    }, [editing, navigate]);
 
     // General profile fields
     function handleChange(e) {
@@ -126,6 +189,7 @@ export default function ProfileSetup() {
     // Submit profile to backend
     async function handleSubmit(e) {
         e.preventDefault();
+        if (saving || !loaded) return;
         setError("");
 
         // Ignore completely empty education entries
@@ -234,10 +298,12 @@ export default function ProfileSetup() {
         setSaving(true);
 
         try {
-            await createProfile(profile);
-            navigate("/dashboard", { replace: true });
+            if (editing) await updateProfile(profile);
+            else await createProfile(profile);
+            navigate(editing ? "/profile" : "/dashboard", { replace: true });
         } catch (error) {
-            setError(error.message);
+            if (error.status === 401) navigate("/login", { replace: true });
+            else setError(error.message);
         } finally {
             setSaving(false);
         }
@@ -299,13 +365,21 @@ export default function ProfileSetup() {
         );
     }
 
+    if (loading || !loaded) return (
+        <div>
+            <h1>Edit Your Profile</h1>
+            {loading ? <p role="status">Loading profile...</p> : <p role="alert">{error}</p>}
+            <Link to="/profile">Back to Profile</Link>
+        </div>
+    );
+
     return (
         <div>
-            <Link to="/dashboard">
-                ← Back to Dashboard
+            <Link to={editing ? "/profile" : "/dashboard"}>
+                {editing ? "Cancel editing" : "Back to Dashboard"}
             </Link>
 
-            <h1>Create Your Profile</h1>
+            <h1>{editing ? "Edit Your Profile" : "Create Your Profile"}</h1>
 
             <form onSubmit={handleSubmit}>
 
