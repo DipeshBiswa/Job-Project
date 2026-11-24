@@ -6,7 +6,9 @@ from pymongo import AsyncMongoClient
 from beanie import init_beanie
 
 from app.Model.user import User
+from app.Model.profile import Profile
 from app.Controller.user_controller import router as user_router
+from app.Controller.profile_controller import router as profile_router
 from fastapi.middleware.cors import CORSMiddleware
 
 """
@@ -27,7 +29,7 @@ async def lifespan(app: FastAPI):
     #initalizes Beanie, lets python work with MongoDB through models 
     await init_beanie(
         database=client["job_project"],
-        document_models=[User]
+        document_models=[User, Profile]
     )
     yield
     await client.close()
@@ -37,6 +39,7 @@ app = FastAPI(lifespan=lifespan)
 
 #connect the routes from user_controller to the application
 app.include_router(user_router)
+app.include_router(profile_router)
 
 @app.get("/")
 async def home():

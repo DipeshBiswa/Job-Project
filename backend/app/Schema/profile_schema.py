@@ -16,7 +16,7 @@ class ProfileCreate(BaseModel):
 
     education: list[Education] = Field(default_factory = list)
 
-    workExprience: list[WorkExprience] = Field(default_factory = list)
+    workExperience: list[WorkExprience] = Field(default_factory = list)
 
     skills: list[str] = Field(default_factory = list)
     professionalLinks: ProfessionalLinks = Field(default_factory = ProfessionalLinks)

@@ -7,6 +7,8 @@ import Register from './Authencation/Register.jsx'
 import Authencation from './Authencation/Authentication.jsx'
 import Dashboard from './Dashboard/Dashboard.jsx'
 import ProtectedRoute from './routes/ProtectedRoute.jsx'
+import ProfileSetup from './Dashboard/ProfileSetup.jsx'
+import Profile from './Profile/Profile.jsx'
 
 const router = createBrowserRouter([
   {path: "/register", element: <Register/>},
@@ -18,7 +20,16 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />
+      },
+      {
+        path: "/profile/setup",
+        element: <ProfileSetup />
+      },
+      {
+        path: "/profile",
+        element: <Profile />
       }
+
     ]
   }
   

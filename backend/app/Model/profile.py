@@ -40,7 +40,7 @@ class ProfessionalLinks(BaseModel):
 
 class WorkEligibility(BaseModel):
     authorizedToWork: bool | None = None
-    requiredSponsorship: bool | None = None
+    requiresSponsorship: bool | None = None
     willingToRelocate: bool | None = None
 
 
@@ -63,8 +63,8 @@ class Profile(Document):
     workEligibility: WorkEligibility = Field(
         default_factory=WorkEligibility
     )
-class Settings:
-    name = "profiles"
+    class Settings:
+        name = "profiles"
 
 
 

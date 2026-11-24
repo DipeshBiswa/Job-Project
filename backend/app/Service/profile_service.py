@@ -11,7 +11,7 @@ class ProfileService:
     def to_response(self, profile: Profile) -> ProfileResponse:
         return ProfileResponse(
             id=str(profile.id),
-            **profile.mode_dump(exclude={"id", "userId"})
+            **profile.model_dump(exclude={"id", "userId"})
         )
     async def create_profile(
             self,data:ProfileCreate, userId: PydanticObjectId
@@ -21,7 +21,7 @@ class ProfileService:
         if existingProfile:
             raise HTTPException(
                 status_code=409,
-                detail="Profile aready exists"
+                detail="Profile already exists"
             )
         profile = Profile(
             userId = userId,
@@ -33,7 +33,7 @@ class ProfileService:
         except DuplicateKeyError:
             raise HTTPException(
                 status_code=409,
-                detail="Profile already"
+                detail="Profile already exists"
             )
         return self.to_response(profile)
 

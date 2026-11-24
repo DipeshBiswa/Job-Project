@@ -31,7 +31,7 @@ async def create_profile(
 
 @router.get(
     "/me",
-    response_mode=ProfileResponse
+    response_model=ProfileResponse
 )
 async def get_profile(
     current_user: Annotated[User, Depends(get_current_user)],
